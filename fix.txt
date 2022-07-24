@@ -1,0 +1,1 @@
+Result print: change mode of generating PDF

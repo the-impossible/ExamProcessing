@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Register{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+{% include "include/messages.html" %}
+  <main>
+    <div class="container">
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-6 d-flex flex-column align-items-center justify-content-center">
+              <h2>
+                <div class="d-flex justify-content-center py-4">
+                  <a href="{% url 'sims:home' %}" class="logo d-flex align-items-center w-auto">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="" width=30> &nbsp;
+                    <span class="d-none d-lg-block"> SIMS</span>
+                  </a>
+                </div><!-- End Logo -->
+              </h2>
+              <div class="card mb-3">
+
+                <div class="card-body">
+
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Create an Account</h5>
+                    <p class="text-center small">Enter your personal details to create account</p>
+                  </div>
+                  <form class="row g-3 needs-validation" method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="col-6">
+                      <label for="firstname" class="form-label">Firstname</label>
+                      {{ form.firstname }}
+                      {% if form.firstname.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.firstname.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your Firstname!</div>
+                    </div>
+
+                    <div class="col-6">
+                      <label for="lastname" class="form-label">Lastname</label>
+                      {{ form.lastname }}
+                      {% if form.lastname.errors %}
+                        <div class="alert alert-danger mt-2 " role="alert">
+                          {{ form.lastname.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please enter your Lastname</div>
+                    </div>
+
+                    <div class="col-6">
+                      <label for="oname" class="form-label">Othername</label>
+                      {{ form.othername }}
+                      {% if form.othername.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.othername.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please enter your Othername</div>
+                    </div>
+
+                    <div class="col-6">
+                      <label for="yourEmail" class="form-label">Email</label>
+                      <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form.email.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">Please enter a valid email.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourPassword" class="form-label">Password</label>
+                      {{ form.password }}
+                      {% if form.password.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.password.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please enter your password!</div>
+                    </div>
+
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Create Account</button>
+                    </div>
+                    <div class="col-12">
+                      <p class="small mb-0">Already have an account? <a href="{% url 'auth:login' %}">Log in</a></p>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  {% include 'include/auth_script.html' %}
+{% endblock body %}

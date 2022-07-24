@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} My Students{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>My Students</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">My Students</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center">
+          <div class="card">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">My Students</h5>
+                <p>Select a student to {{ mode }} Result </p>
+              </div>
+              <!-- Table with stripped rows -->
+              {% if students %}
+              <table class="table datatable table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Picture</th>
+                    <th scope="col">Firstname</th>
+                    <th scope="col">Lastname</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in students %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>
+                      <a href="{% if mode == 'upload' %}{% url 'sims_admin:add_grades' student.student_acct.id 'upload' %} {% else %} {% url 'sims_admin:add_grades' student.student_acct.id 'view' %} {% endif %}">
+                        <img src="{% if student.student_acct.imageURL != '' %} {{ student.student_acct.imageURL }} {% else %} {% static 'uploaded/user.png' %} {% endif %}" alt="Profile" class="rounded-circle" width="40">
+                      </a>
+                    </td>
+                    <td>{{ student.student_acct.firstname }}</td>
+                    <td>{{ student.student_acct.lastname }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>There is no student recorded</p>
+                        <a href="{% url 'sims_admin:add_student' %}" class="btn btn-primary btn-sm mx-auto">Add student</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ mode }}ing Result Info</h5>
+              <p>Select which of the student you want to upload result for</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} My Classes{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>My Classes</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">My Classes</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center">
+          <div class="card">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">My Classes</h5>
+                <p>Select a class to {{ mode }} Result </p>
+              </div>
+              <!-- Table with stripped rows -->
+              {% if class_list %}
+              <table class="table datatable table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Section</th>
+                    <th scope="col">Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for class in class_list %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{% url 'sims_admin:my_student' class.student_class mode %}">{{ class.student_class }}</a></td>
+                    <td>{{ class.student_class.section }}</td>
+                    <td>{{ class.student_class.creation_date }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>There is no staff recorded</p>
+                        <a href="{% url 'sims_admin:add_staff' %}" class="btn btn-primary btn-sm mx-auto">Add Staffs</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ mode }}ing Result Info</h5>
+              <p>Select which of your class you want to upload result for</p>
+            </div>
+          </div>
+        </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

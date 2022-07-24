@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Assign Class{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Assign Class</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Assign class to staff</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+          <div class="card">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">Assign a Class</h5>
+                <p class="text-center small">Fill the form below to assign a class to a staff</p>
+                {% include "include/messages.html" %}
+              </div>
+              <form method="POST" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="col-12">
+                  <label for="student_class" class="form-label">Select Class</label>
+                  {{ form.student_class }}
+                  {% if form.student_class.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form.student_class.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select the Class!</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="staff" class="form-label">Select Staff</label>
+                  {{ form.staff }}
+                  {% if form.staff.errors %}
+                    <div class="alert alert-danger mt-2 " role="alert">
+                      {{ form.staff.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select the staff</div>
+                </div>
+                <div class="col-12">
+                  <button class="btn btn-primary w-100" name="student" type="submit">Link Staff</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Link Staff to a Class Info</h5>
+              <p>Fill the form appropraitely to link an existing staff to a class</p>
+            </div>
+          </div>
+
+        </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

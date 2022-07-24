@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Dashboard{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Create Student Account</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Create Student</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+          <div class="card">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">Create a Student Account</h5>
+                <p class="text-center small">Enter personal details of the student to create account</p>
+                {% include "include/messages.html" %}
+              </div>
+              <form method="POST" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="col-6">
+                  <label for="firstname" class="form-label">Firstname</label>
+                  {{ form.firstname }}
+                  {% if form.firstname.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form.firstname.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please, enter your Firstname!</div>
+                </div>
+
+                <div class="col-6">
+                  <label for="lastname" class="form-label">Lastname</label>
+                  {{ form.lastname }}
+                  {% if form.lastname.errors %}
+                    <div class="alert alert-danger mt-2 " role="alert">
+                      {{ form.lastname.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please enter your Lastname</div>
+                </div>
+
+                <div class="col-6">
+                  <label for="oname" class="form-label">Othername</label>
+                  {{ form.othername }}
+                  {% if form.othername.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form.othername.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please enter your Othername</div>
+                </div>
+
+                <div class="col-6">
+                  <label for="yourEmail" class="form-label">Email</label>
+                  <div class="input-group has-validation">
+                    <span class="input-group-text" id="inputGroupPrepend">@</span>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                      <div class="alert alert-danger mt-2" role="alert">
+                        {{ form.email.errors }}
+                      </div>
+                    {% endif %}
+                    <div class="invalid-feedback">Please enter a valid email.</div>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <label for="yourClass" class="form-label">Select Class</label>
+                  {{ form1.student_class }}
+                  {% if form1.student_class.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form1.student_class.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select a class.</div>
+                </div>
+
+                <div class="col-6">
+                  <label for="yourGender" class="form-label">Select Gender</label>
+                  {{ form1.student_gender }}
+                  {% if form1.student_gender.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form1.student_gender.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select Gender.</div>
+                </div>
+
+                <div class="col-6">
+                  <label for="yourDOB" class="form-label">Date of Birth</label>
+                  {{ form1.student_date_of_birth }}
+                  {% if form1.student_date_of_birth.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form1.student_date_of_birth.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select date of birth.</div>
+                </div>
+
+                <div class="col-6">
+                  <label for="yourRole" class="form-label">Select Role</label>
+                  {{ form1.student_role }}
+                  {% if form1.student_role.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form1.student_role.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select a class.</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="yourPassword" class="form-label">Password</label>
+                  {{ form.password }}
+                  {% if form.password.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form.password.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please enter your password!</div>
+                </div>
+
+                <div class="col-12">
+                  <button class="btn btn-primary w-100" name="student" type="submit">Create Account</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Account Creation Info</h5>
+              <p>Provide student with login details(password and email) in other for them to <b>Update</b> their profile.</p>
+            </div>
+          </div>
+
+        </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

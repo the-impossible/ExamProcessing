@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Manage Subject Combination{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Manage Subject Combination</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Subject Combination</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+        {% include "include/messages.html" %}
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Subject Combination</h5>
+              <p>The table contains all Subject Combination, Uses action column to edit and delete combinations </p>
+
+              <!-- Table with stripped rows -->
+              {% if subjects %}
+              <table class="table datatable table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Subject</th>
+                    <th scope="col">Subject Class</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for subject in subjects %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td>{{ subject.select_subject }}</td>
+                    <td>{{ subject.select_class }}</td>
+                    <td>
+                      <a href="{% url 'sims_admin:edit_subject_combo' subject.id  %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil-square"></i> </a>
+                      <a href="{% url 'sims_admin:list_subjects_combo' subject.id 'delete' %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-recycle"></i></a>
+                    </td>
+                  </tr>
+                 {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>There is no subject recorded</p>
+                        <a href="{% url 'sims_admin:add_subject' %}" class="btn btn-primary btn-sm mx-auto">Add Subjects</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

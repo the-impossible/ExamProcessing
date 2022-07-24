@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Login{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  <main>
+    <div class="container">
+      <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+
+              <div class="d-flex justify-content-center py-4">
+                <h2>
+                  <a href="{% url 'sims:home' %}" class="logo d-flex align-items-center w-auto">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="">
+                    <span class="d-none d-lg-block">SIMS</span>
+                  </a>
+                </h2>
+              </div><!-- End Logo -->
+
+              <div class="card mb-3">
+
+                <div class="card-body">
+
+                  <div class="pt-4 pb-2">
+                    <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
+                    <p class="text-center small">Enter your email & password to login</p>
+                  </div>
+
+                  <form class="row g-3 needs-validation" method="POST" novalidate>
+                    {% csrf_token %}
+                    <div class="col-12">
+                      {% include "include/messages.html" %}
+                      <label for="yourEmail" class="form-label">Email Address</label>
+                      <div class="input-group has-validation">
+                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                        <input type="text" name="email" class="form-control" id="yourEmail" required>
+                        <div class="invalid-feedback">Please enter your Email Address.</div>
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label for="yourPassword" class="form-label">Password</label>
+                      <input type="password" name="password" class="form-control" id="yourPassword" required>
+                      <div class="invalid-feedback">Please enter your password!</div>
+                    </div>
+
+                    <div class="col-12">
+                      <button class="btn btn-primary w-100" type="submit">Login</button>
+                    </div>
+
+                    <div class="col-12">
+                      {% comment %} <p class="small mb-0">Don't have account? <a href="{% url 'auth:register' %}">Create an account</a></p> {% endcomment %}
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+{% include 'include/auth_script.html' %}
+{% endblock body %}

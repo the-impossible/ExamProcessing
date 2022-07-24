@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Dashboard{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Assign Subject</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Assign Subject to class</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+          <div class="card">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">Assign a Subject</h5>
+                <p class="text-center small">Fill the form below to assign a subject to a class</p>
+                {% include "include/messages.html" %}
+              </div>
+              <form method="POST" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="col-12">
+                  <label for="select_class" class="form-label">Class</label>
+                  {{ form.select_class }}
+                  {% if form.select_class.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form.select_class.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select the Class!</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="select_subject" class="form-label">Subject</label>
+                  {{ form.select_subject }}
+                  {% if form.select_subject.errors %}
+                    <div class="alert alert-danger mt-2 " role="alert">
+                      {{ form.select_subject.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please select the subject</div>
+                </div>
+                {% if form.combination_desc.errors %}
+                    <div class="alert alert-danger mt-2 " role="alert">
+                      {{ form.combination_desc.errors }}
+                    </div>
+                  {% endif %}
+                <div class="col-12">
+                  <button class="btn btn-primary w-100" name="student" type="submit">Link Subject</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Link Subject Creation Info</h5>
+              <p>Fill the form appropraitely to link an existing subject to a class</p>
+            </div>
+          </div>
+
+        </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

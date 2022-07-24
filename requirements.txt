@@ -1,0 +1,5 @@
+pillow==8.4.0
+bcrypt==3.2.0
+argon2-cffi==21.3.0
+django==4.0
+xhtml2pdf==0.2.5

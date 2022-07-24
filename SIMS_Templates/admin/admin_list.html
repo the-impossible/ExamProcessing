@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} List Admins{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Manage admins</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Admin</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          {% include "include/messages.html" %}
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Admin</h5>
+              <p class="text-center">Use the action pane to edit or delete administrator </p>
+
+              <!-- Table with stripped rows -->
+              {% if admins %}
+              <table class="table datatable table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="text-center">#</th>
+                    <th scope="col" class="text-center">Firstname</th>
+                    <th scope="col" class="text-center">Lastname</th>
+                    <th scope="col" class="text-center">Email Address</th>
+                    <th scope="col" class="text-center">Phone</th>
+                    <th scope="col" class="text-center">Gender</th>
+                    <th scope="col" class="text-center">DOB</th>
+                    <th scope="col" class="text-center">Edit</th>
+                    <th scope="col" class="text-center">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for admin in admins %}
+                  <tr>
+                    <th class="text-center" scope="row">{{ forloop.counter }}</th>
+                    <td>{{ admin.admin_acct.firstname }}</td>
+                    <td>{{ admin.admin_acct.lastname }}</td>
+                    <td class="text-center">{{ admin.admin_acct.email }}</td>
+                    <td class="text-center">{{ admin.admin_phone }}</td>
+                    <td class="text-center">{{ admin.admin_gender }}</td>
+                    <td class="text-center">{{ admin.admin_date_of_birth }}</td>
+                    <td class="text-center">
+                      <a href="{% url 'sims_admin:edit_admin' admin.id %}" class="btn btn-outline-primary btn-sm mb-2"><i class="bi bi-pencil-square"></i> </a>
+                    </td>
+                    <td class="text-center">
+                      <form method="POST" action="{% url 'sims_admin:delete_admin' admin.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-recycle"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                 {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>There is no admin Record</p>
+                        <a href="{% url 'sims_admin:add_admin' %}" class="btn btn-primary btn-sm mx-auto">Add Admin</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

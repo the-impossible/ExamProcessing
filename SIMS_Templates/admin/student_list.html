@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} List Student{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Manage Students</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Student</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          {% include "include/messages.html" %}
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Students</h5>
+              <p class="text-center">Select a student firstname to see full details and edit student. Use Result column to upload, and view to upload and view student result </p>
+
+              <!-- Table with stripped rows -->
+              {% if students %}
+              <table class="table datatable table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="text-center">#</th>
+                    <th scope="col" class="text-center">Firstname</th>
+                    <th scope="col" class="text-center">Lastname</th>
+                    <th scope="col" class="text-center">Class</th>
+                    <th scope="col" class="text-center">Gender</th>
+                    <th scope="col" class="text-center">Result</th>
+                    <th scope="col" class="text-center">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for student in students %}
+                  <tr>
+                    <th class="text-center" scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{% url 'sims_admin:profile' student.student_acct.id %}">{{ student.student_acct.firstname }}</a></td>
+                    <td>{{ student.student_acct.lastname }}</td>
+                    <td class="text-center">{{ student.student_class }}</td>
+                    <td class="text-center">{{ student.student_gender }}</td>
+                    <td class="text-center">
+                      <a href="{% url 'sims_admin:add_grades' student.student_acct.id 'upload' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-upload"></i> </a>
+                      <a href="{% url 'sims_admin:add_grades' student.student_acct.id 'view' %}" class="btn btn-outline-info btn-sm"><i class="bi bi-eye"></i></a>
+                    </td>
+                    <td class="text-center">
+                      <form method="POST" action="{% url 'sims_admin:delete_student' student.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-recycle"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                 {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>There is no student in this class</p>
+                        <a href="{% url 'sims_admin:add_student' %}" class="btn btn-primary btn-sm mx-auto">Add Students</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

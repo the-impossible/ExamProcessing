@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Manage Staff{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Manage Staffs</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Staffs</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          {% include "include/messages.html" %}
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Staffs</h5>
+              <p>The table contains all staffs, select a staff to see their profile </p>
+
+              <!-- Table with stripped rows -->
+              {% if staffs %}
+              <table class="table datatable table-striped table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Firstname</th>
+                    <th scope="col">Lastname</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Assigned Class</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Delete</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for staff in staffs %}
+                  <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a href="{% url 'sims_admin:profile' staff.staff_acct.id %}">{{ staff.staff_acct.firstname }}</a></td>
+                    <td>{{ staff.staff_acct.lastname }}</td>
+                    <td>{{ staff.staff_phone }}</td>
+                    <td>{{ staff.staff_class }}</td>
+                    <td>{{ staff.staff_role }}</td>
+                    <td>{{ staff.staff_gender }}</td>
+                    <td class="text-center">
+                      <form method="POST" action="{% url 'sims_admin:delete_staff' staff.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-recycle"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                 {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>There is no staff recorded</p>
+                        <a href="{% url 'sims_admin:add_staff' %}" class="btn btn-primary btn-sm mx-auto">Add Staffs</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

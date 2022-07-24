@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Dashboard{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Manage {{ mode }}</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Student(class)</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          {% include "include/messages.html" %}
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">{{ mode }}</h5>
+              <p>Select class to display students in the selected class</p>
+
+              <!-- Table with stripped rows -->
+              {% if classes %}
+              <table class="table datatable table-striped table-hover table-sm">
+                <thead class="thead-light">
+                  <tr>
+                    <th class="text-center" scope="col" class="text-center">#</th>
+                    <th class="text-center" scope="col">Class Name</th>
+                    <th class="text-center" scope="col">Section</th>
+                    <th scope="col" class="text-center">Creation Date</th>
+                    {% if mode == 'Classes' %}
+                    <th scope="col" class="text-center">Action</th>
+                    <th scope="col" class="text-center">Action</th>
+                    {% endif %}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for class in classes %}
+                  <tr>
+                    <th class="text-center" scope="row">{{ forloop.counter }}</th>
+                    <td class="text-center"><a href="{% url 'sims_admin:student_list' class.class_name class.section %}">{{ class.class_name }}</a></td>
+                    <td class="text-center">{{ class.section }}</td>
+                    <td class="text-center">{{ class.creation_date }}</td>
+                     {% if mode == 'Classes' %}
+                      <td class="text-center">
+                        <a href="{% url 'sims_admin:create_class' 'edit' class.id  %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil-square"></i> </a>
+                      </td>
+                      <td>
+                        <form method="POST" action="{% url 'sims_admin:create_class' 'delete' class.id  %}">
+                          {% csrf_token %}
+                          <button type="sumbit"  class="btn btn-outline-danger btn-sm"><i class="bi bi-recycle"></i></button>
+                        </form>
+                      </td>
+                    {% else %}
+                    {% endif %}
+                  </tr>
+                 {% endfor %}
+                </tbody>
+              </table>
+              <!-- End Table with stripped rows -->
+              {% else %}
+              <div class="row">
+                <div class="col-lg-8 mx-auto mt-5">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="my-3 mt-5 text-center">
+                        <p>You do not have any classes</p>
+                        <a href="{% url 'sims_admin:create_class' 'create' 0  %}" class="btn btn-primary btn-sm mx-auto">Add Class</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}

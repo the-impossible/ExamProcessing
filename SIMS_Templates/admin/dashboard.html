@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Dashboard{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+        <!-- Left side columns -->
+        <div class="col-lg-12">
+          <div class="row">
+            {% include "include/messages.html" %}
+
+            {% if not request.user.is_staff and not request.user.is_superuser %}
+            <!-- Students Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Class Mates</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ cmate }}</h6><span class="text-muted small pt-2 ps-1">Number of Classmates</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+
+            {% if request.user.is_staff %}
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Students</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ students }}</h6><span class="text-muted small pt-2 ps-1">Number of Students</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+            <!-- End Students Card -->
+            {% if request.user.is_staff and request.user.is_superuser %}
+            <!-- Staff Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card revenue-card">
+                <div class="card-body">
+                  <h5 class="card-title">Staffs</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-people"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ staffs }}</h6><span class="text-muted small pt-2 ps-1">Number of Registered Staffs</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Staff Card -->
+            {% endif %}
+            <!-- Courses Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card customers-card">
+                <div class="card-body">
+                  <h5 class="card-title">Subjects</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-journal-text"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ subjects }}</h6><span class="text-muted small pt-2 ps-1">Total Number of Subjects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Courses Card -->
+            {% if request.user.is_superuser %}
+             <!-- Courses Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card customers-card">
+                <div class="card-body">
+                  <h5 class="card-title">Grades</h5>
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-bar-chart"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ grades }}</h6><span class="text-muted small pt-2 ps-1">Grades Uploaded</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Courses Card -->
+            {% endif %}
+
+            {% if request.user.is_staff %}
+            <!-- Classes Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Total Classes</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-layout-text-window-reverse"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ classes }}</h6><span class="text-muted small pt-2 ps-1">Number of registered classes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Classes Card -->
+            {% endif %}
+
+            {% if not request.user.is_superuser and request.user.is_staff %}
+            <!-- Classes Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Assigned Classes</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-layout-text-window-reverse"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ staff_assigned_classes }}</h6><span class="text-muted small pt-2 ps-1">Number of Assigned classes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Classes Card -->
+            {% endif %}
+
+            <!-- End Classes Card -->
+            {% if request.user.is_superuser %}
+            <!-- Classes Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 class="card-title">Assigned Classes</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-layout-text-window-reverse"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ assigned_classes }}</h6><span class="text-muted small pt-2 ps-1">Number of Assigned classes</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Classes Card -->
+            {% endif %}
+
+            <!-- Staff Card -->
+            <div class="col-xxl-4 col-md-4">
+              <div class="card info-card revenue-card">
+
+                <div class="card-body">
+                  <h5 class="card-title">Student Roles</h5>
+
+                  <div class="d-flex align-items-center">
+                    <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                      <i class="bi bi-currency-dollar"></i>
+                    </div>
+                    <div class="ps-3">
+                      <h6>{{ roles }}</h6><span class="text-muted small pt-2 ps-1">Number of student roles</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <!-- End Staff Card -->
+          </div>
+        </div>
+        <!-- End Left side columns -->
+      </div>
+    </section>
+  </main>
+  <!-- End #main -->
+{% include 'include/auth_script.html' %}
+{% endblock body %}

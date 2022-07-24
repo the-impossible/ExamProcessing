@@ -1,0 +1,680 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Profile{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Profile</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item">Users</li>
+          <li class="breadcrumb-item active">Profile</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        {% include "include/messages.html" %}
+        <div class="col-xl-4">
+
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+              <img src="{{ user.imageURL }}" width="60" alt="Profile" class="rounded-circle">
+              <h2>{{ user.firstname }} {{ user.lastname }}</h2>
+              <h3>{% if student.student_role %}{{ student.student_role}} {% elif staff.staff_role %} {{ staff.staff_role}} {% elif user.is_superuser %} Admin {% else%} User has no assigned Role {% endif %}</h3>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-xl-8">
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                </li>
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                </li>
+              </ul>
+              {% if mode == 'student' %}
+                <div class="tab-content pt-2">
+                  <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                    <h5 class="card-title">Profile Details</h5>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                      <div class="col-lg-9 col-md-8">{{ user.firstname }} {{ user.lastname }} {{ user.othername }}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">School Number</div>
+                      <div class="col-lg-9 col-md-8">{{ user.schNo }}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Email Address</div>
+                      <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Class</div>
+                      <div class="col-lg-9 col-md-8">{{ student.student_class}}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Gender</div>
+                      <div class="col-lg-9 col-md-8">{{ student.student_gender}}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Date of Birth</div>
+                      <div class="col-lg-9 col-md-8">{{ student.student_date_of_birth}}</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-3 col-md-4 label">Role</div>
+                      <div class="col-lg-9 col-md-8">{{ student.student_role}}</div>
+                    </div>
+                  </div>
+                  <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                    <!-- Profile Edit Form -->
+                    <form method="POST" class="row g-3" enctype="multipart/form-data">
+                      {% csrf_token %}
+                      <div class="row mb-3">
+                        <div  class="col-md-4 col-lg-3">
+                          <label for="profileImage" class="col-form-label">Profile Image</label>
+                        </div>
+                        <div class="col-md-8 col-lg-9">
+                          <div class="row">
+                            <div class="col-md-3 col-lg-3">
+                              <img {% if user.imageURL != '' %} src="{{ user.imageURL }}" width="60" {% else %} src="{% static 'uploaded/user.png' %}" {% endif %} alt="Profile">
+                            </div>
+                            <div class="col-md-9 col-lg-9">
+                              <div class="pt-2">
+                                {{ form2.picture}}
+                                {% if form2.picture.errors %}
+                                  <div class="alert alert-danger mt-2" role="alert">
+                                    {{ form2.picture.errors }}
+                                  </div>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="text-center mb-3 mt-3">
+                            <button type="submit" name="picture" title="Upload new profile image" class="btn btn-primary"><i class="bi bi-upload"></i> Upload picture</button>
+                          </div>
+                      </div>
+                    </form>
+                    <form method="POST" class="row g-3 needs-validation" novalidate>
+                      {% csrf_token %}
+                      <div class="row mb-3">
+                        <label for="firstname" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form.firstname }}
+                          {% if form.firstname.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form.firstname.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">Please, enter your Firstname!</div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="lastname" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                        <div class="col-md-8 col-lg-9">
+                        {{ form.lastname }}
+                          {% if form.lastname.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form.lastname.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">Please, enter your Lastname!</div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="othername" class="col-md-4 col-lg-3 col-form-label">Other Name</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form.othername }}
+                          {% if form.othername.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form.othername.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">Please, enter your othername!</div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="email" class="col-md-4 col-lg-3 col-form-label">Email Address</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form.email }}
+                          {% if form.email.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form.email.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">Please, enter a valid email!</div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="schNo" class="col-md-4 col-lg-3 col-form-label">school Number</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form.schNo }}
+                          {% if form.schNo.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form.schNo.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">pre populated field!</div>
+                        </div>
+                      </div>
+                      {% if request.user.is_superuser %}
+                      <div class="row mb-3">
+                        <label for="student_class" class="col-md-4 col-lg-3 col-form-label">Student Class</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form1.student_class }}
+                          {% if form1.student_class.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form1.student_class.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">pre populated field!</div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="student_role" class="col-md-4 col-lg-3 col-form-label">Student Role</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form1.student_role }}
+                          {% if form1.student_role.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form1.student_role.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">pre populated field!</div>
+                        </div>
+                      </div>
+                      {% endif %}
+                      <div class="row mb-3">
+                        <label for="student_gender" class="col-md-4 col-lg-3 col-form-label">Student Gender</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form1.student_gender }}
+                          {% if form1.student_gender.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form1.student_gender.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">pre populated field!</div>
+                        </div>
+                      </div>
+
+                      <div class="row mb-3">
+                        <label for="student_date_of_birth" class="col-md-4 col-lg-3 col-form-label">Student DOB</label>
+                        <div class="col-md-8 col-lg-9">
+                          {{ form1.student_date_of_birth }}
+                          {% if form1.student_date_of_birth.errors %}
+                          <div class="alert alert-danger mt-2" role="alert">
+                            {{ form1.student_date_of_birth.errors }}
+                          </div>
+                        {% endif %}
+                        <div class="invalid-feedback">pre populated field!</div>
+                        </div>
+                      </div>
+
+                      <div class="text-center">
+                        <button type="submit" name="info" class="btn btn-primary">Save Changes</button>
+                      </div>
+                    </form><!-- End Profile Edit Form -->
+                  </div>
+                </div>
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                  <!-- Change Password Form -->
+                  <form action="{% url 'sims_auth:cpass' user.id %}" method="POST">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                      <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="password" type="password" class="form-control" id="newPassword">
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="password1" type="password" class="form-control" id="renewPassword">
+                      </div>
+                    </div>
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                  </form><!-- End Change Password Form -->
+                </div>
+              </div>
+              {% elif mode == 'staff' %}
+                <div class="tab-content pt-2">
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">Profile Details</h5>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                    <div class="col-lg-9 col-md-8">{{ user.firstname }} {{ user.lastname }} {{ user.othername }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">School Number</div>
+                    <div class="col-lg-9 col-md-8">{{ user.schNo }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email Address</div>
+                    <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                    <div class="col-lg-9 col-md-8">{{ staff.staff_phone}}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Gender</div>
+                    <div class="col-lg-9 col-md-8">{{ staff.staff_gender}}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Date of Birth</div>
+                    <div class="col-lg-9 col-md-8">{{ staff.staff_date_of_birth}}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Role</div>
+                    <div class="col-lg-9 col-md-8">{{ staff.staff_role}}</div>
+                  </div>
+                </div>
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                  <!-- Profile Edit Form -->
+                   <form method="POST" class="row g-3" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                      <div  class="col-md-4 col-lg-3">
+                        <label for="profileImage" class="col-form-label">Profile Image</label>
+                      </div>
+                      <div class="col-md-8 col-lg-9">
+                        <div class="row">
+                          <div class="col-md-3 col-lg-3">
+                            <img {% if user.imageURL != '' %} src="{{ user.imageURL }}" width="60" {% else %} src="{% static 'uploaded/user.png' %}" {% endif %} alt="Profile">
+                          </div>
+                          <div class="col-md-9 col-lg-9">
+                            <div class="pt-2">
+                              {{ form2.picture}}
+                              {% if form2.picture.errors %}
+                                <div class="alert alert-danger mt-2" role="alert">
+                                  {{ form2.picture.errors }}
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="text-center mb-3 mt-3">
+                          <button type="submit" name="picture" title="Upload new profile image" class="btn btn-primary"><i class="bi bi-upload"></i> Upload picture</button>
+                        </div>
+                    </div>
+                  </form>
+                  <form method="POST" class="row g-3 needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                      <label for="firstname" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.firstname }}
+                        {% if form.firstname.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.firstname.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your Firstname!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="lastname" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                      <div class="col-md-8 col-lg-9">
+                      {{ form.lastname }}
+                        {% if form.lastname.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.lastname.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your Lastname!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="othername" class="col-md-4 col-lg-3 col-form-label">Other Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.othername }}
+                        {% if form.othername.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.othername.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your othername!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="email" class="col-md-4 col-lg-3 col-form-label">Email Address</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.email.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter a valid email!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="schNo" class="col-md-4 col-lg-3 col-form-label">school Number</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.schNo }}
+                        {% if form.schNo.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.schNo.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="staff_phone" class="col-md-4 col-lg-3 col-form-label">Phone Number</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.staff_phone }}
+                        {% if form1.staff_phone.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.staff_phone.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+                    {% if request.user.is_superuser %}
+                    <div class="row mb-3">
+                      <label for="staff_role" class="col-md-4 col-lg-3 col-form-label">Staff Role</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.staff_role }}
+                        {% if form1.staff_role.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.staff_role.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="staff_class" class="col-md-4 col-lg-3 col-form-label">Staff Class</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.staff_class }}
+                        {% if form1.staff_class.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.staff_class.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+                    {% endif %}
+                    <div class="row mb-3">
+                      <label for="staff_gender" class="col-md-4 col-lg-3 col-form-label">Staff Gender</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.staff_gender }}
+                        {% if form1.staff_gender.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.staff_gender.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="staff_date_of_birth" class="col-md-4 col-lg-3 col-form-label">Staff DOB</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.staff_date_of_birth }}
+                        {% if form1.staff_date_of_birth.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.staff_date_of_birth.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" name="info" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+                </div>
+              </div>
+              <div class="tab-pane fade pt-3" id="profile-change-password">
+                <!-- Change Password Form -->
+                <form action="{% url 'sims_auth:cpass' user.id %}" method="POST">
+                  {% csrf_token %}
+                  <div class="row mb-3">
+                    <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                    <div class="col-md-8 col-lg-9">
+                      <input name="password" type="password" class="form-control" id="newPassword">
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                    <div class="col-md-8 col-lg-9">
+                      <input name="password1" type="password" class="form-control" id="renewPassword">
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                  </div>
+                </form><!-- End Change Password Form -->
+              </div>
+              </div>
+              {% else %}
+              <div class="tab-content pt-2">
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">Profile Details</h5>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Full Name</div>
+                    <div class="col-lg-9 col-md-8">{{ user.firstname }} {{ user.lastname }} {{ user.othername }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">School Number</div>
+                    <div class="col-lg-9 col-md-8">{{ user.schNo }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Email Address</div>
+                    <div class="col-lg-9 col-md-8">{{ user.email }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Phone</div>
+                    <div class="col-lg-9 col-md-8">{{ admin.admin_phone }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Gender</div>
+                    <div class="col-lg-9 col-md-8">{{ admin.admin_gender }}</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Date of Birth</div>
+                    <div class="col-lg-9 col-md-8">{{ admin.admin_date_of_birth}}</div>
+                  </div>
+                </div>
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                  <!-- Profile Edit Form -->
+                   <form method="POST" class="row g-3" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                      <div  class="col-md-4 col-lg-3">
+                        <label for="profileImage" class="col-form-label">Profile Image</label>
+                      </div>
+                      <div class="col-md-8 col-lg-9">
+                        <div class="row">
+                          <div class="col-md-3 col-lg-3">
+                            <img {% if user.imageURL != '' %} src="{{ user.imageURL }}" width="60" {% else %} src="{% static 'uploaded/user.png' %}" {% endif %} alt="Profile">
+                          </div>
+                          <div class="col-md-9 col-lg-9">
+                            <div class="pt-2">
+                              {{ form2.picture}}
+                              {% if form2.picture.errors %}
+                                <div class="alert alert-danger mt-2" role="alert">
+                                  {{ form2.picture.errors }}
+                                </div>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="text-center mb-3 mt-3">
+                          <button type="submit" name="picture" title="Upload new profile image" class="btn btn-primary"><i class="bi bi-upload"></i> Upload picture</button>
+                        </div>
+                    </div>
+                  </form>
+                  <form method="POST" class="row g-3 needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                      <label for="firstname" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.firstname }}
+                        {% if form.firstname.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.firstname.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your Firstname!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="lastname" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+                      <div class="col-md-8 col-lg-9">
+                      {{ form.lastname }}
+                        {% if form.lastname.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.lastname.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your Lastname!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="othername" class="col-md-4 col-lg-3 col-form-label">Other Name</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.othername }}
+                        {% if form.othername.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.othername.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter your othername!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="email" class="col-md-4 col-lg-3 col-form-label">Email Address</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.email.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">Please, enter a valid email!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="schNo" class="col-md-4 col-lg-3 col-form-label">school Number</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form.schNo }}
+                        {% if form.schNo.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form.schNo.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="admin_phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.admin_phone }}
+                        {% if form1.admin_phone.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.admin_phone.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+                    <div class="row mb-3">
+                      <label for="admin_gender" class="col-md-4 col-lg-3 col-form-label">Admin Gender</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.admin_gender }}
+                        {% if form1.admin_gender.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.admin_gender.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="admin_date_of_birth" class="col-md-4 col-lg-3 col-form-label">Admin DOB</label>
+                      <div class="col-md-8 col-lg-9">
+                        {{ form1.admin_date_of_birth }}
+                        {% if form1.admin_date_of_birth.errors %}
+                        <div class="alert alert-danger mt-2" role="alert">
+                          {{ form1.admin_date_of_birth.errors }}
+                        </div>
+                      {% endif %}
+                      <div class="invalid-feedback">pre populated field!</div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" name="info" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form><!-- End Profile Edit Form -->
+                </div>
+              </div>
+              <div class="tab-pane fade pt-3" id="profile-change-password">
+                <!-- Change Password Form -->
+                <form action="{% url 'sims_auth:cpass' user.id %}" method="POST">
+                  {% csrf_token %}
+                  <div class="row mb-3">
+                    <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                    <div class="col-md-8 col-lg-9">
+                      <input name="password" type="password" class="form-control" id="newPassword">
+                    </div>
+                  </div>
+                  <div class="row mb-3">
+                    <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                    <div class="col-md-8 col-lg-9">
+                      <input name="password1" type="password" class="form-control" id="renewPassword">
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                  </div>
+                </form><!-- End Change Password Form -->
+              </div>
+              </div><!-- End Bordered Tabs -->
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main><!-- End #main -->
+{% include 'include/auth_script.html' %}
+{% endblock body %}

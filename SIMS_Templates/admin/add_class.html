@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Dashboard{% endblock %}
+{% block head %} {% include 'include/auth_head.html' %} {% endblock %}
+{% block body %}
+  {% include 'include/login_nav.html' %}
+  {% include 'include/admin_sidebar.html' %}
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>{{mode}} Class</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'sims_admin:dashboard' %}">Home</a></li>
+          <li class="breadcrumb-item active">{{mode}} Class</li>
+        </ol>
+      </nav>
+    </div><!-- End Page Title -->
+
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-8 col-md-8 d-flex flex-column align-items-center justify-content-center">
+
+          <div class="card">
+            <div class="card-body">
+              <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">{{mode}} a Class</h5>
+                <p class="text-center small">Fill the form below to {{mode}} a class</p>
+                {% include "include/messages.html" %}
+              </div>
+              <form method="POST" class="row g-3 needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="col-12">
+                  <label for="class_name" class="form-label">Class name</label>
+                  {{ form.class_name }}
+                  {% if form.class_name.errors %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                      {{ form.class_name.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please, enter the class name!</div>
+                </div>
+
+                <div class="col-12">
+                  <label for="section" class="form-label">Section (A, B C)</label>
+                  {{ form.section }}
+                  {% if form.section.errors %}
+                    <div class="alert alert-danger mt-2 " role="alert">
+                      {{ form.section.errors }}
+                    </div>
+                  {% endif %}
+                  <div class="invalid-feedback">Please enter the section e.g </div>
+                </div>
+
+                <div class="col-12">
+                  <button class="btn btn-primary w-100" name="student" type="submit">{{mode}} Class</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Class Creation Info</h5>
+              <p>Fill the form appropraitely to create a class for section enter A, B,... e.t.c</p>
+            </div>
+          </div>
+
+        </div>
+    </section>
+
+  </main><!-- End #main -->
+
+
+{% include 'include/auth_script.html' %}
+{% endblock body %}
