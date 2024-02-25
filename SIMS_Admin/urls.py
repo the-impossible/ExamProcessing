@@ -57,8 +57,8 @@ urlpatterns = [
     path('my_student/<str:class_name>/<str:mode>', MyStudentView.as_view(), name='my_student'),
     path('add_grades/<int:user_id>/<str:mode>', AddGradeOrViewResult.as_view(), name='add_grades'),
     # Edit result
-    path('edit_grades/<str:subject>/<int:user_id>/', EditGradeView.as_view(), name='edit_grades'),
-    path('delete_grades/<str:subject>/<int:user_id>/', DeleteGradeView.as_view(), name='delete_grades'),
+    path('edit_grades/<int:grade_id>/<int:user_id>/', EditGradeView.as_view(), name='edit_grades'),
+    path('delete_grades/<int:grade_id>/<int:user_id>/', DeleteGradeView.as_view(), name='delete_grades'),
     path('result_pdf/<int:user_id>/', ResultToPDFView.as_view(), name='result_pdf'),
     #Add Admin
     path('add_admin', AddAdminView.as_view(), name='add_admin'),

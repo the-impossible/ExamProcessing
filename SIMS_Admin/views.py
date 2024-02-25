@@ -14,6 +14,7 @@ from SIMS_Authentication.views import generate_schno
 from SIMS_Admin.models import StudentClass, Student, Staff, StaffClassCombination, SubjectCombination, Subjects, StudentGrades, StudentRoles, Admins
 from SIMS_Authentication.models import Accounts
 from SIMS_Admin.decorator import is_admin, is_staff
+import socket
 
 # PDF
 from django.http import HttpResponse
@@ -441,7 +442,7 @@ class DeleteStaffView(View):
     @method_decorator(is_admin)
     def post(self, request, user_id):
         try:
-            staff = Staff.objects.get(id=user_id)
+            staff = Accounts.objects.get(id=user_id)
             staff.delete()
             messages.success(request, ('Staff Account Deleted successfully'))
             return redirect('sims_admin:list_staffs')
@@ -605,7 +606,7 @@ class MyStudentView(LoginRequiredMixin, View):
         return render(request, 'admin/my_students.html', context)
 
 class AddGradeOrViewResult(LoginRequiredMixin, View):
-    @method_decorator(is_staff)
+    # @method_decorator(is_staff)
     def get(self, request, user_id, mode):
         if mode == 'upload':
             try:
@@ -665,14 +666,14 @@ class AddGradeOrViewResult(LoginRequiredMixin, View):
             messages.error(request, ('Error processing Grades Try again!'))
             form.fields['select_subject'].queryset = SubjectCombination.objects.filter(select_class_id=user.student_class_id)
             return render(request, 'admin/add_grades.html', {'form':form, 'user':user, 'mode':'Upload'})
-        return redirect('sims_admin:add_grades', user_id /'upload')
+        return redirect('sims_admin:add_grades', user_id,'upload')
 
 class EditGradeView(LoginRequiredMixin, View):
     @method_decorator(is_staff)
-    def get(self, request, subject, user_id):
+    def get(self, request, grade_id, user_id):
         try:
             student = Student.objects.get(student_acct_id=user_id)
-            subject = StudentGrades.objects.get(id=subject)
+            subject = StudentGrades.objects.get(id=grade_id)
             form = StudentGradesForm(instance=subject)
             form.fields['select_subject'].queryset = SubjectCombination.objects.filter(id=subject.select_subject_id)
             context = {
@@ -685,9 +686,10 @@ class EditGradeView(LoginRequiredMixin, View):
         return render(request, 'admin/add_grades.html', context)
 
     @method_decorator(is_staff)
-    def post(self, request, subject, user_id):
+    def post(self, request, grade_id, user_id):
         user = Student.objects.get(student_acct_id=user_id)
-        subject = StudentGrades.objects.get(id=subject)
+        subject = StudentGrades.objects.get(id=grade_id)
+
         form = StudentGradesForm(data=request.POST, instance=subject)
 
         if form.is_valid():
@@ -705,8 +707,8 @@ class EditGradeView(LoginRequiredMixin, View):
 
 class DeleteGradeView(LoginRequiredMixin, View):
     @method_decorator(is_staff)
-    def get(self, request, subject, user_id):
-        subject = StudentGrades.objects.get(select_subject_id=subject)
+    def get(self, request, grade_id, user_id):
+        subject = StudentGrades.objects.get(id=grade_id)
         subject.delete()
         messages.success(request, ('Grade deleted!'))
         return redirect('sims_admin:add_grades', user_id, 'view')
@@ -770,9 +772,16 @@ class ResultToPDFView(LoginRequiredMixin, View):
         html = template.render(context)
 
         # create a pdf
-        pisa_status = pisa.CreatePDF(
-        html, dest=response, link_callback=self.link_callback)
-        # if error then show some funy view
-        if pisa_status.err:
-            return HttpResponse('We had some errors <pre>' + html + '</pre>')
-        return response
+        try:
+            pisa_status = pisa.CreatePDF(
+            html, dest=response, link_callback=self.link_callback)
+            # if error then show some funy view
+            if pisa_status.err:
+                return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            return response
+        except TimeoutError:
+            messages.error(request, 'Internet connection is required!')
+            return redirect('sims_admin:add_grades', user_id, 'view')
+        except socket.gaierror:
+            messages.error(request, 'Internet connection is required!')
+            return redirect('sims_admin:add_grades', user_id, 'view')

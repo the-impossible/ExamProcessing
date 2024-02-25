@@ -102,8 +102,12 @@
                   <div class="card">
                     <div class="card-body">
                       <div class="my-3 mt-5 text-center">
+                        {% if request.user.is_staff %}
                         <p>Result not upload for {{ user.student_acct.firstname }} {{ user.student_acct.lastname }}</p>
                         <a href="{% url 'sims_admin:add_grades' user.student_acct.id 'upload' %}" class="btn btn-primary btn-sm mx-auto">Add Grades</a>
+                        {% else %}
+                        <p>Result not yet uploaded</p>
+                        {% endif %}
                       </div>
                     </div>
                   </div>
@@ -158,7 +162,7 @@
             {% for grade in grades %}
             <tr>
               <th scope="row">{{ forloop.counter }}</th>
-              <td class="text-center"><a href="{% url 'sims_admin:edit_grades' grade.id user.id %}">{{ grade.select_subject.select_subject }}</a></td>
+              <td class="text-center"><a href="{% url 'sims_admin:edit_grades' grade.id user.student_acct.id %}">{{ grade.select_subject.select_subject }}</a></td>
               <td class="text-center">{{ grade.student_ca1 }}</td>
               <td class="text-center">{{ grade.student_ca2 }}</td>
               <td class="text-center">{{ grade.student_ca3 }}</td>
@@ -227,7 +231,7 @@
               <td class="text-center">{{ grade.student_exam }}</td>
               <td class="text-center">{{ grade.student_total }}</td>
               <td class="text-center">
-                <a href="{% url 'sims_admin:delete_grades' grade.select_subject_id user.student_acct.id  %}" class="btn btn-outline-danger"><i class="bi bi-recycle"></i></a>
+                <a href="{% url 'sims_admin:delete_grades' grade.id user.student_acct.id  %}" class="btn btn-outline-danger"><i class="bi bi-recycle"></i></a>
               </td>
             </tr>
           {% endfor %}
@@ -241,7 +245,7 @@
               <div class="card-body">
                 <div class="my-3 mt-5 text-center">
                   <p>Result not upload for {{ user.student_acct.firstname }} {{ user.student_acct.lastname }}</p>
-                  <a href="{% url 'sims_admin:add_staff' %}" class="btn btn-primary btn-sm mx-auto">Add Grades</a>
+                  <a href="{% url 'sims_admin:add_grades' user.student_acct.id 'upload' %}" class="btn btn-primary btn-sm mx-auto">Add Grades</a>
                 </div>
               </div>
             </div>
